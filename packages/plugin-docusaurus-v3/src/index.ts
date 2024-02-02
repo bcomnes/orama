@@ -33,7 +33,8 @@ export default function OramaPluginDocusaurus(ctx: { siteDir: any; generatedFile
     async contentLoaded({ actions, allContent }) {
       const isDevelopment = process.env.NODE_ENV === 'development'
 
-      const loadedVersions = (allContent['docusaurus-plugin-content-docs']?.default as LoadedContent)?.loadedVersions
+      const loadedVersions = Object.values(allContent['docusaurus-plugin-content-docs']).flatMap(entry => (entry as LoadedContent)?.loadedVersions)
+
       versions = loadedVersions.map((v) => v.versionName)
 
       await Promise.all(
@@ -66,7 +67,8 @@ export default function OramaPluginDocusaurus(ctx: { siteDir: any; generatedFile
 }
 
 async function buildDevSearchData(siteDir: string, generatedFilesDir: string, allContent: any, version: string) {
-  const loadedVersion = allContent['docusaurus-plugin-content-docs']?.default?.loadedVersions?.find(
+  const loadedVersions = Object.values(allContent['docusaurus-plugin-content-docs']).flatMap(entry => (entry as LoadedContent)?.loadedVersions)
+  const loadedVersion = loadedVersions.find(
     (v: LoadedVersion) => v.versionName === version
   )
   const blogs = allContent['docusaurus-plugin-content-blog']?.default?.blogPosts?.map(({ metadata }: any) => metadata) ?? []
